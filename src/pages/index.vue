@@ -4,7 +4,7 @@ import { vElementHover } from '@vueuse/components'
 import axios from 'axios'
 import type { BlockState, ResBlock } from '~/types'
 
-const basurl = ''
+const basurl = '//localhost:8080'
 
 const configKonva = reactive({
   width: document.body.offsetWidth,
@@ -37,12 +37,18 @@ const configRects = reactive(
   ),
 )
 
-const res = (await axios.get(`${basurl}/data`)).data.req as ResBlock[]
-res.forEach((block) => {
-  configRects[block.y][block.x].fill = block.fill
+onMounted(async() => {
+  const res = (await axios.get(`${basurl}/data`)).data.data as ResBlock[]
+  console.log(res)
+  for (let index = 0; index < res.length; index++) {
+    configRects[res[index].y][res[index].x] = {
+      ...configRects[res[index].y][res[index].x],
+      fill: res[index].fill,
+    }
+  }
 })
 
-const ws = new WebSocket(`ws:${basurl}websocket`)
+const ws = new WebSocket(`ws:${basurl}/websocket`)
 
 ws.onopen = function() {
   // Web Socket 已连接上，使用 send() 方法发送数据
