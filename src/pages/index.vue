@@ -1,18 +1,27 @@
 <script setup lang="ts">
 import type { BlockState } from '~/types'
 
-const configKonva = {
+const configKonva = reactive({
   width: document.body.offsetWidth,
   height: document.body.offsetHeight,
-}
+})
 
 const X = Math.ceil(document.body.offsetWidth / 40)
 const Y = Math.ceil(document.body.offsetHeight / 40)
+
+useResizeObserver(document.body, (entries) => {
+  const entry = entries[0]
+  const { width, height } = entry.contentRect
+  configKonva.width = width
+  configKonva.height = height
+})
 
 const configRects = reactive(
   Array.from({ length: Y }, (_, y) =>
     Array.from({ length: X },
       (_, x): BlockState => ({
+        _x: x,
+        _y: y,
         x: x * 40,
         y: y * 40,
         width: 40,
@@ -34,7 +43,11 @@ ws.onopen = function() {
 
 ws.onmessage = function(evt) {
   const received_msg = evt.data
-  console.log(received_msg)
+  const block = JSON.parse(received_msg)
+  configRects[block._y][block._x] = {
+    ...configRects[block._y][block._x],
+    fill: block.color,
+  }
 }
 
 // ws.onclose = function() {
