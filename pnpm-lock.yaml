@@ -10,6 +10,7 @@ specifiers:
   '@vue/test-utils': ^2.0.0-rc.18
   '@vueuse/components': ^8.2.5
   '@vueuse/core': ^8.2.4
+  axios: ^0.26.1
   eslint: ^8.12.0
   jsdom: ^19.0.0
   konva: ^8.3.5
@@ -30,6 +31,7 @@ dependencies:
   '@ckpack/vue-color': 1.1.8_vue@3.2.31
   '@vueuse/components': 8.2.5_vue@3.2.31
   '@vueuse/core': 8.2.4_vue@3.2.31
+  axios: 0.26.1
   konva: 8.3.5
   vue: 3.2.31
   vue-konva: 3.0.0_konva@8.3.5
@@ -963,7 +965,6 @@ packages:
       follow-redirects: 1.14.9
     transitivePeerDependencies:
       - debug
-    dev: true
 
   /balanced-match/1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -2078,7 +2079,6 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
-    dev: true
 
   /foreach/2.0.5:
     resolution: {integrity: sha1-C+4AUBiusmDQo6865ljdATbsG5k=}

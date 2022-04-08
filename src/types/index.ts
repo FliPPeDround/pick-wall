@@ -7,3 +7,9 @@ export interface BlockState {
   stroke: string
   strokeWidth: number
 }
+
+export interface ResBlock {
+  x: number
+  y: number
+  fill: string
+}

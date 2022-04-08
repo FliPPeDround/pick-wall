@@ -1,7 +1,10 @@
 <script setup lang="ts">
 import { Sketch } from '@ckpack/vue-color'
 import { vElementHover } from '@vueuse/components'
-import type { BlockState } from '~/types'
+import axios from 'axios'
+import type { BlockState, ResBlock } from '~/types'
+
+const basurl = ''
 
 const configKonva = reactive({
   width: document.body.offsetWidth,
@@ -34,7 +37,12 @@ const configRects = reactive(
   ),
 )
 
-const ws = new WebSocket('ws://9.135.92.198:8080/websocket')
+const res = (await axios.get(`${basurl}/data`)).data.req as ResBlock[]
+res.forEach((block) => {
+  configRects[block.y][block.x].fill = block.fill
+})
+
+const ws = new WebSocket(`ws:${basurl}websocket`)
 
 ws.onopen = function() {
   // Web Socket 已连接上，使用 send() 方法发送数据
@@ -60,6 +68,8 @@ const color = ref({
 })
 
 function handleClick(block: BlockState) {
+  if (block.fill === color.value.hex8)
+    return
   block.fill = color.value.hex8
 
   ws.send(JSON.stringify(
@@ -71,8 +81,11 @@ function handleClick(block: BlockState) {
   ))
 }
 
+const isHovered = ref(false)
 function onHover(state: boolean) {
   console.log(state)
+
+  isHovered.value = state
 }
 
 </script>
@@ -95,4 +108,7 @@ function onHover(state: boolean) {
     </v-layer>
   </v-stage>
   <Sketch v-model="color" />
+  <button v-element-hover="onHover">
+    {{ isHovered ? 'Thank you!' : 'Hover me' }}
+  </button>
 </template>

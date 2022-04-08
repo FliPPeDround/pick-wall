@@ -13,6 +13,7 @@
     "@ckpack/vue-color": "^1.1.8",
     "@vueuse/components": "^8.2.5",
     "@vueuse/core": "^8.2.4",
+    "axios": "^0.26.1",
     "konva": "^8.3.5",
     "vue": "^3.2.31",
     "vue-konva": "^3.0.0",
