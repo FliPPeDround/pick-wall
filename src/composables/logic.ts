@@ -1,4 +1,5 @@
 import type { Ref } from 'vue'
+import ws from './websocket'
 import type { BlockState, State, configWall } from '~/types'
 
 export class PickWallInit {
@@ -26,8 +27,8 @@ export class PickWallInit {
     this.rectLen = rectLen
 
     this.state.value = {
-      row: Math.floor(width / rectLen),
-      column: Math.floor(height / rectLen),
+      row: Math.ceil(width / rectLen),
+      column: Math.ceil(height / rectLen),
     }
     this.config.value = {
       configKonva: {
@@ -55,12 +56,17 @@ export class PickWallInit {
       return
     block.fill = this.color.value.hex8
 
-    // ws.send(JSON.stringify(
-    //   {
-    //     x: block.x / 30,
-    //     y: block.y / 30,
-    //     fill: block.fill,
-    //   },
-    // ))
+    ws.send(JSON.stringify(
+      {
+        x: block.x / 30,
+        y: block.y / 30,
+        fill: block.fill,
+      },
+    ))
+  }
+
+  changeColor(color: string) {
+    // @ts-expect-error it's ok
+    this.color.value = color
   }
 }

@@ -8,6 +8,8 @@ useResizeObserver(document.body, (entries) => {
   text.value = `width: ${width}, height: ${height}`
 })
 
+console.log(import.meta.env)
+
 </script>
 
 <template>
