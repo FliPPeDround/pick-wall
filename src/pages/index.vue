@@ -1,120 +1,60 @@
 <script setup lang="ts">
-import { Sketch } from '@ckpack/vue-color'
-import { vElementHover } from '@vueuse/components'
-import axios from 'axios'
-import type { BlockState, ResBlock } from '~/types'
+// import { Sketch } from '@ckpack/vue-color'
+// import axios from 'axios'
+// import type { BlockState, ResBlock } from '~/types'
+import { PickWallInit } from '~/composables/logic'
 
-const basurl = '//localhost:8080'
+const init = new PickWallInit(document.body.offsetWidth, document.body.offsetHeight, 30)
+const config = $computed(() => init.config.value)
 
-const configKonva = reactive({
-  width: document.body.offsetWidth,
-  height: document.body.offsetHeight,
-})
-
-const X = Math.ceil(document.body.offsetWidth / 40)
-const Y = Math.ceil(document.body.offsetHeight / 40)
-
+// const basurl = '//localhost:8080'
 useResizeObserver(document.body, (entries) => {
   const entry = entries[0]
   const { width, height } = entry.contentRect
-  configKonva.width = width
-  configKonva.height = height
+  init.reset(width, height)
 })
 
-const configRects = reactive(
-  Array.from({ length: Y }, (_, y) =>
-    Array.from({ length: X },
-      (_, x): BlockState => ({
-        x: x * 40,
-        y: y * 40,
-        width: 40,
-        height: 40,
-        fill: '#FFF',
-        stroke: '#9B9B9B82',
-        strokeWidth: 1,
-      }),
-    ),
-  ),
-)
+// onMounted(async() => {
+//   const res = (await axios.get(`${basurl}/data`)).data.data as ResBlock[]
+//   res.forEach((block) => {
+//     configRects[block.y][block.x].fill = block.fill
+//   })
+// })
 
-onMounted(async() => {
-  const res = (await axios.get(`${basurl}/data`)).data.data as ResBlock[]
-  console.log(res)
-  for (let index = 0; index < res.length; index++) {
-    configRects[res[index].y][res[index].x] = {
-      ...configRects[res[index].y][res[index].x],
-      fill: res[index].fill,
-    }
-  }
-})
+// const ws = new WebSocket(`ws:${basurl}/websocket`)
 
-const ws = new WebSocket(`ws:${basurl}/websocket`)
-
-ws.onopen = function() {
-  // Web Socket 已连接上，使用 send() 方法发送数据
-  // ws.send('发送数据')
-}
-
-ws.onmessage = function(evt) {
-  const received_msg = evt.data
-  const block = JSON.parse(received_msg)
-  configRects[block.y][block.x] = {
-    ...configRects[block.y][block.x],
-    fill: block.fill,
-  }
-}
-
-// ws.onclose = function() {
-//   // 关闭 websocket
-//   alert('连接已关闭...')
+// ws.onmessage = function(evt) {
+//   const received_msg = evt.data
+//   const block = JSON.parse(received_msg)
+//   configRects[block.y][block.x].fill = block.fill
 // }
 
-const color = ref({
-  hex8: '#000',
-})
+// // ws.onclose = function() {
+// //   // 关闭 websocket
+// //   alert('连接已关闭...')
+// // }
 
-function handleClick(block: BlockState) {
-  if (block.fill === color.value.hex8)
-    return
-  block.fill = color.value.hex8
-
-  ws.send(JSON.stringify(
-    {
-      x: block.x / 40,
-      y: block.y / 40,
-      fill: block.fill,
-    },
-  ))
-}
-
-const isHovered = ref(false)
-function onHover(state: boolean) {
-  console.log(state)
-
-  isHovered.value = state
-}
+// const color = ref({
+//   hex8: '#000',
+// })
 
 </script>
 
 <template>
-  <v-stage :config="configKonva">
+  <v-stage :config="config.configKonva">
     <v-layer>
       <div
-        v-for="row,y in configRects"
+        v-for="row,y in config.configRects"
         :key="y"
       >
         <v-rect
           v-for="block, x in row"
           :key="x"
-          v-element-hover="onHover"
           :config="block"
-          @click="handleClick(block)"
+          @click="init.pickblock(block)"
         />
       </div>
     </v-layer>
   </v-stage>
-  <Sketch v-model="color" />
-  <button v-element-hover="onHover">
-    {{ isHovered ? 'Thank you!' : 'Hover me' }}
-  </button>
+  <!-- <Sketch v-model="color" /> -->
 </template>
