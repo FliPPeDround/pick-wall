@@ -25,4 +25,5 @@ useResizeObserver(document.body, (entries) => {
       </div>
     </v-layer>
   </v-stage>
+  <ColorPicker absolute bottom-2 left-0 right-0 m-auto w130 />
 </template>

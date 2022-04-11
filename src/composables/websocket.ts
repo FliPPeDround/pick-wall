@@ -5,7 +5,6 @@ const baseUrl = import.meta.env.VITE_SOCKET_URL
 const ws = new WebSocket(`ws:${baseUrl}/websocket`)
 
 ws.onopen = function() {
-  // Web Socket 已连接上，使用 send() 方法发送数据
 }
 
 ws.onmessage = function(evt) {
@@ -16,7 +15,6 @@ ws.onmessage = function(evt) {
 
 ws.onclose = function() {
   // 关闭 websocket
-  alert('连接已关闭...')
 }
 
 export default ws

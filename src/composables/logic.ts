@@ -5,9 +5,7 @@ import { getConfigRects } from '~/api/getConfigRects'
 export class PickWallInit {
   config = ref() as Ref<configWall>
   state = ref() as Ref<State>
-  color = ref({
-    hex8: '#000',
-  })
+  color = ref('#000')
 
   constructor(
     public width: number,
@@ -56,9 +54,9 @@ export class PickWallInit {
   }
 
   pickblock(block: BlockState) {
-    if (block.fill === this.color.value.hex8)
+    if (block.fill === this.color.value)
       return
-    block.fill = this.color.value.hex8
+    block.fill = this.color.value
 
     ws.send(JSON.stringify(
       {
@@ -69,8 +67,7 @@ export class PickWallInit {
     ))
   }
 
-  changeColor(color: string) {
-    // @ts-expect-error it's ok
+  pickColor(color: string) {
     this.color.value = color
   }
 }
