@@ -11,6 +11,7 @@ export interface BlockState {
 export interface configKonva {
   width: number
   height: number
+  draggable: boolean
 }
 
 export interface State {

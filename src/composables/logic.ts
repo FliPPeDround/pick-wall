@@ -32,6 +32,7 @@ export class PickWallInit {
       configKonva: {
         width,
         height,
+        draggable: true,
       },
       configRects: Array.from({ length: this.state.value.y }, (_, y) =>
         Array.from({ length: this.state.value.x },
