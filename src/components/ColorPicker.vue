@@ -11,11 +11,10 @@ const predefineColors = [
   '#000000',
   '#FFFFFF',
 ]
-
 </script>
 
 <template>
-  <div flex bg-gray-400 justify-center rounded-3xl>
+  <div flex bg="gray-400/80" justify-center rounded-3xl>
     <div flex="~ row">
       <div
         v-for="(color, index) in predefineColors"
