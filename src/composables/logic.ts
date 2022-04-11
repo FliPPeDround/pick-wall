@@ -35,8 +35,8 @@ export class PickWallInit {
         width,
         height,
       },
-      configRects: Array.from({ length: this.state.value.x }, (_, y) =>
-        Array.from({ length: this.state.value.y },
+      configRects: Array.from({ length: this.state.value.y }, (_, y) =>
+        Array.from({ length: this.state.value.x },
           (_, x) => ({
             x: x * rectLen,
             y: y * rectLen,
