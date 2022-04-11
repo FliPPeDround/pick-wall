@@ -7,13 +7,6 @@ useResizeObserver(document.body, (entries) => {
   init.reset(width, height)
 })
 
-// onMounted(async() => {
-//   const res = (await axios.get(`${basurl}/data`)).data.data as ResBlock[]
-//   res.forEach((block) => {
-//     configRects[block.y][block.x].fill = block.fill
-//   })
-// })
-
 </script>
 
 <template>

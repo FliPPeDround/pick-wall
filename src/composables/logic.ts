@@ -1,7 +1,7 @@
 import type { Ref } from 'vue'
 import ws from './websocket'
 import type { BlockState, State, configWall } from '~/types'
-
+import { getConfigRects } from '~/api/getConfigRects'
 export class PickWallInit {
   config = ref() as Ref<configWall>
   state = ref() as Ref<State>
@@ -17,7 +17,7 @@ export class PickWallInit {
     this.reset()
   }
 
-  reset(
+  async reset(
     width = this.width,
     height = this.height,
     rectLen = this.rectLen,
@@ -27,16 +27,16 @@ export class PickWallInit {
     this.rectLen = rectLen
 
     this.state.value = {
-      row: Math.ceil(width / rectLen),
-      column: Math.ceil(height / rectLen),
+      x: Math.ceil(width / rectLen),
+      y: Math.ceil(height / rectLen),
     }
     this.config.value = {
       configKonva: {
         width,
         height,
       },
-      configRects: Array.from({ length: this.state.value.column }, (_, y) =>
-        Array.from({ length: this.state.value.row },
+      configRects: Array.from({ length: this.state.value.x }, (_, y) =>
+        Array.from({ length: this.state.value.y },
           (_, x) => ({
             x: x * rectLen,
             y: y * rectLen,
@@ -49,6 +49,10 @@ export class PickWallInit {
         ),
       ),
     }
+    const res = await getConfigRects(this.state.value)
+    res.forEach((block) => {
+      this.config.value.configRects[block.y][block.x].fill = block.fill
+    })
   }
 
   pickblock(block: BlockState) {

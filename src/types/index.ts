@@ -14,8 +14,8 @@ export interface configKonva {
 }
 
 export interface State {
-  row: number
-  column: number
+  x: number
+  y: number
 }
 
 export interface configWall {
