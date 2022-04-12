@@ -1,11 +1,11 @@
 import type { Ref } from 'vue'
 import ws from './websocket'
-import type { BlockState, State, configWall } from '~/types'
+import type { BlockState, Rect, configWall } from '~/types'
 import { getConfigRects } from '~/api/getConfigRects'
 import { deleteConfigRect } from '~/api/deleteConfigRect'
 export class PickWallInit {
   config = ref() as Ref<configWall>
-  state = ref() as Ref<State>
+  state = ref() as Ref<Rect>
   color = ref('#000')
 
   constructor(
@@ -26,16 +26,18 @@ export class PickWallInit {
     this.rectLen = rectLen
 
     this.state.value = {
-      x: Math.ceil(width / rectLen),
-      y: Math.ceil(height / rectLen),
+      startX: 0,
+      startY: 0,
+      endX: Math.ceil(width / rectLen),
+      endY: Math.ceil(height / rectLen),
     }
     this.config.value = {
       configKonva: {
         width,
         height,
       },
-      configRects: Array.from({ length: this.state.value.y }, (_, y) =>
-        Array.from({ length: this.state.value.x },
+      configRects: Array.from({ length: (this.state.value.endY - this.state.value.startY) }, (_, y) =>
+        Array.from({ length: (this.state.value.endX - this.state.value.startX) },
           (_, x) => ({
             x: x * rectLen,
             y: y * rectLen,
@@ -81,10 +83,33 @@ export class PickWallInit {
     this.color.value = color
   }
 
-  draggable(movePoint: { x: number; y: number }) {
+  async draggable(movePoint: { x: number; y: number }) {
     const OffsetX = Math.floor(movePoint.x / this.rectLen)
     const OffsetY = Math.floor(movePoint.y / this.rectLen)
     // this.config.value.configRects
-    console.log(OffsetX, OffsetY)
+    this.state.value = {
+      ...this.state.value,
+      startX: this.state.value.startX + OffsetX,
+      startY: this.state.value.startY + OffsetY,
+    }
+    console.log(this.state.value)
+    // this.config.value.configRects.forEach((row) => {
+    //   row.forEach((block) => {
+    //     block.fill = '#FFF'
+    //   })
+    // })
+    const res = await getConfigRects(this.state.value)
+    // res.forEach(async(block) => {
+    //   if (this.config.value.configRects?.[block.y - OffsetY]?.[block.x + OffsetX]) {
+    //     this.config.value.configRects[block.y][block.x].fill = '#FFF'
+    //     await nextTick()
+    //     this.config.value.configRects[block.y - OffsetY][block.x + OffsetX].fill = block.fill
+    //   }
+    // })
+    for (let index = 0; index < res.length; index++) {
+      this.config.value.configRects[res[index].y][res[index].x].fill = '#FFF'
+      await nextTick()
+      this.config.value.configRects[res[index - OffsetY].y][res[index + OffsetX].x].fill = res[index].fill
+    }
   }
 }

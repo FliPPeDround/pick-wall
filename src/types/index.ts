@@ -20,9 +20,11 @@ export interface configKonva {
   height: number
 }
 
-export interface State {
-  x: number
-  y: number
+export interface Rect {
+  startX: number
+  startY: number
+  endX: number
+  endY: number
 }
 
 export interface configWall {
