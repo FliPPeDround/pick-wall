@@ -10,7 +10,8 @@ ws.onopen = function() {
 ws.onmessage = function(evt) {
   const received_msg = evt.data
   const block = JSON.parse(received_msg)
-  config.configRects[block.y][block.x].fill = block.fill
+  if (config.value.configRects?.[block.y]?.[block.x])
+    config.value.configRects[block.y][block.x].fill = block.fill
 }
 
 ws.onclose = function() {
