@@ -7,18 +7,52 @@ useResizeObserver(document.body, (entries) => {
   init.reset(width, height)
 })
 
+let startPoint = {
+  x: 0,
+  y: 0,
+}
+
+let movePoint = {
+  x: 0,
+  y: 0,
+}
+
+const { x, y } = useMouse()
+const { pressed } = useMousePressed()
+
+function onDragStart() {
+  startPoint = {
+    x: x.value,
+    y: y.value,
+  }
+}
+
+function onDragMove() {
+  if (!pressed.value)
+    return
+  movePoint = {
+    x: startPoint.x - x.value,
+    y: startPoint.y - y.value,
+  }
+  init.draggable(movePoint)
+}
 </script>
 
 <template>
-  <v-stage :config="config.configKonva">
-    <v-layer>
+  <v-stage
+    :config="config.configKonva"
+  >
+    <v-layer
+      @mousedown="onDragStart"
+      @mousemove="onDragMove"
+    >
       <div
-        v-for="row,y in config.configRects"
-        :key="y"
+        v-for="row,indexY in config.configRects"
+        :key="indexY"
       >
         <v-rect
-          v-for="block, x in row"
-          :key="x"
+          v-for="block, indexX in row"
+          :key="indexX"
           :config="block"
           @click="init.pickblock(block)"
         />

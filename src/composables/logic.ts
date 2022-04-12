@@ -33,7 +33,6 @@ export class PickWallInit {
       configKonva: {
         width,
         height,
-        draggable: true,
       },
       configRects: Array.from({ length: this.state.value.y }, (_, y) =>
         Array.from({ length: this.state.value.x },
@@ -80,5 +79,12 @@ export class PickWallInit {
 
   pickColor(color: string) {
     this.color.value = color
+  }
+
+  draggable(movePoint: { x: number; y: number }) {
+    const OffsetX = Math.floor(movePoint.x / this.rectLen)
+    const OffsetY = Math.floor(movePoint.y / this.rectLen)
+    // this.config.value.configRects
+    console.log(OffsetX, OffsetY)
   }
 }
