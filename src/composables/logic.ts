@@ -3,6 +3,7 @@ import ws from './websocket'
 import type { BlockState, Rect, configWall } from '~/types'
 import { getConfigRects } from '~/api/getConfigRects'
 import { deleteConfigRect } from '~/api/deleteConfigRect'
+
 export class PickWallInit {
   config = ref() as Ref<configWall>
   state = ref() as Ref<Rect>
@@ -31,10 +32,50 @@ export class PickWallInit {
       endX: Math.ceil(width / rectLen),
       endY: Math.ceil(height / rectLen),
     }
+    // eslint-disable-next-line @typescript-eslint/no-this-alias
+    const self = this
     this.config.value = {
       configKonva: {
         width,
         height,
+        draggable: true,
+        dragBoundFunc(pos) {
+          const newY = pos.y > 0 ? 0 : pos.y
+          const newX = pos.x > 0 ? 0 : pos.x
+          const row = -Math.ceil(newX / self.rectLen) || 1
+          const col = -Math.ceil(newY / self.rectLen) || 1
+          const newRectsY = Array.from({ length: col }, (_, y) =>
+            Array.from({ length: row + self.state.value.endX },
+              (_, x) => ({
+                x: x * rectLen,
+                y: (y + self.state.value.endY) * rectLen,
+                width: rectLen,
+                height: rectLen,
+                fill: '#FFF',
+                stroke: '#9B9B9B82',
+                strokeWidth: 1,
+              }),
+            ),
+          )
+          // const newRectsX = Array.from({ length: row + self.state.value.endX },
+          //   (_, x) => ({
+          //     x: x * rectLen,
+          //     y: (col + self.state.value.endY) * rectLen,
+          //     width: rectLen,
+          //     height: rectLen,
+          //     fill: '#FFF',
+          //     stroke: '#9B9B9B82',
+          //     strokeWidth: 1,
+          //   }),
+          // )
+
+          for (const i in newRectsY)
+            self.config.value.configRects.push(newRectsY[i])
+          return {
+            x: newX,
+            y: newY,
+          }
+        },
       },
       configRects: Array.from({ length: (this.state.value.endY - this.state.value.startY) }, (_, y) =>
         Array.from({ length: (this.state.value.endX - this.state.value.startX) },
@@ -52,11 +93,6 @@ export class PickWallInit {
     }
     const res = await getConfigRects(this.state.value)
 
-    // for (let index = 0; index < res.length; index++) {
-    //   this.config.value.configRects?.[res?.[index]?.y]?.[res?.[index]?.x]?.fill = res?.[index].fill
-    //   await nextTick()
-    //   console.log(res[index])
-    // }
     res.forEach((block) => {
       if (this.config.value.configRects?.[block.y]?.[block.x])
         this.config.value.configRects[block.y][block.x].fill = block.fill
@@ -81,35 +117,5 @@ export class PickWallInit {
 
   pickColor(color: string) {
     this.color.value = color
-  }
-
-  async draggable(movePoint: { x: number; y: number }) {
-    const OffsetX = Math.floor(movePoint.x / this.rectLen)
-    const OffsetY = Math.floor(movePoint.y / this.rectLen)
-    // this.config.value.configRects
-    this.state.value = {
-      ...this.state.value,
-      startX: this.state.value.startX + OffsetX,
-      startY: this.state.value.startY + OffsetY,
-    }
-    console.log(this.state.value)
-    // this.config.value.configRects.forEach((row) => {
-    //   row.forEach((block) => {
-    //     block.fill = '#FFF'
-    //   })
-    // })
-    const res = await getConfigRects(this.state.value)
-    // res.forEach(async(block) => {
-    //   if (this.config.value.configRects?.[block.y - OffsetY]?.[block.x + OffsetX]) {
-    //     this.config.value.configRects[block.y][block.x].fill = '#FFF'
-    //     await nextTick()
-    //     this.config.value.configRects[block.y - OffsetY][block.x + OffsetX].fill = block.fill
-    //   }
-    // })
-    for (let index = 0; index < res.length; index++) {
-      this.config.value.configRects[res[index].y][res[index].x].fill = '#FFF'
-      await nextTick()
-      this.config.value.configRects[res[index - OffsetY].y][res[index + OffsetX].x].fill = res[index].fill
-    }
   }
 }

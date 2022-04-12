@@ -1,3 +1,8 @@
+export interface Point {
+  x: number
+  y: number
+}
+
 export interface BlockState {
   x: number
   y: number
@@ -18,6 +23,8 @@ export interface RequestBlock {
 export interface configKonva {
   width: number
   height: number
+  draggable: boolean
+  dragBoundFunc: (pos: Point) => Point
 }
 
 export interface Rect {
