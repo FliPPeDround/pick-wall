@@ -8,6 +8,13 @@ export interface BlockState {
   strokeWidth: number
 }
 
+export interface RequestBlock {
+  x: number
+  y: number
+  id: number
+  fill: string
+}
+
 export interface configKonva {
   width: number
   height: number

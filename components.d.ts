@@ -5,7 +5,6 @@
 declare module 'vue' {
   export interface GlobalComponents {
     ColorPicker: typeof import('./src/components/ColorPicker.vue')['default']
-    ElColorPicker: typeof import('element-plus/es')['ElColorPicker']
     Footer: typeof import('./src/components/Footer.vue')['default']
   }
 }

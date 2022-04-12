@@ -1,8 +1,8 @@
-import axios from 'axios'
+import request from '~/composables/request'
 import type { BlockState, State } from '~/types'
 
 function getConfigRects(range: State) {
-  return axios.post<unknown, BlockState[], State>('/api/getConfigRects', range)
+  return request.post<unknown, BlockState[], State>('data/getConfigRects', range)
 }
 
 export {

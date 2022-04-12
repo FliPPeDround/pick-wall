@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const request = axios.create({
-  baseURL: import.meta.env.VITE_SOCKET_URL,
+  baseURL: 'http://9.135.92.198:8080/api/',
   withCredentials: true,
 })
 
@@ -14,7 +14,7 @@ request.interceptors.response.use(
     if (response.status !== 200)
       alert(`response.status: ${response.status}`)
 
-    return response.data
+    return response.data.data
   },
   (error) => {
     if (error.response.status === 401)

@@ -1,8 +1,8 @@
 import { config } from './init'
 
-const baseUrl = import.meta.env.VITE_SOCKET_URL
+// const baseUrl = import.meta.env.VITE_SOCKET_URL
 
-const ws = new WebSocket(`ws:${baseUrl}/websocket`)
+const ws = new WebSocket('ws://9.135.92.198:8080/api/websocket')
 
 ws.onopen = function() {
 }
