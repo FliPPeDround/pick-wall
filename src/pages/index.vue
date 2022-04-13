@@ -23,6 +23,7 @@ useResizeObserver(document.body, (entries) => {
           :key="indexX"
           :config="block"
           @click="init.pickblock(block)"
+          @dblclick="init.deleteBlock(block)"
         />
       </div>
     </v-layer>

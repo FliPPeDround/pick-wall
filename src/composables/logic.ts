@@ -1,6 +1,6 @@
 import type { Ref } from 'vue'
 import ws from './websocket'
-import type { BlockState, Rect, configWall } from '~/types'
+import type { BlockState, Point, Rect, configWall } from '~/types'
 import { getConfigRects } from '~/api/getConfigRects'
 import { deleteConfigRect } from '~/api/deleteConfigRect'
 
@@ -44,35 +44,9 @@ export class PickWallInit {
           const newX = pos.x > 0 ? 0 : pos.x
           const row = -Math.ceil(newX / self.rectLen) || 1
           const col = -Math.ceil(newY / self.rectLen) || 1
-          const newRectsY = Array.from({ length: col }, (_, y) =>
-            Array.from({ length: row + self.state.value.endX },
-              (_, x) => ({
-                x: x * rectLen,
-                y: (y + self.state.value.endY) * rectLen,
-                width: rectLen,
-                height: rectLen,
-                fill: '#FFF',
-                stroke: '#9B9B9B82',
-                strokeWidth: 1,
-              }),
-            ),
-          )
-          // const newRectsX = Array.from({ length: row + self.state.value.endX },
-          //   (_, x) => ({
-          //     x: x * rectLen,
-          //     y: (col + self.state.value.endY) * rectLen,
-          //     width: rectLen,
-          //     height: rectLen,
-          //     fill: '#FFF',
-          //     stroke: '#9B9B9B82',
-          //     strokeWidth: 1,
-          //   }),
-          // )
-
-          for (const i in newRectsY)
-            self.config.value.configRects.push(newRectsY[i])
+          self.debouncedFn({ x: row, y: col })
           return {
-            x: newX,
+            x: this.absolutePosition().x,
             y: newY,
           }
         },
@@ -105,7 +79,7 @@ export class PickWallInit {
     block.fill = this.color.value
     // eslint-disable-next-line no-constant-condition
     if (this.color.value === '#FFF' || '#FFFFFF')
-      deleteConfigRect(1)
+      this.deleteBlock(block)
     ws.send(JSON.stringify(
       {
         x: block.x / 30,
@@ -115,7 +89,50 @@ export class PickWallInit {
     ))
   }
 
+  deleteBlock(block: BlockState) {
+    console.log(123)
+    block.fill = '#FFF'
+    deleteConfigRect({
+      x: block.x / 30,
+      y: block.y / 30,
+    })
+  }
+
   pickColor(color: string) {
     this.color.value = color
   }
+
+  debouncedFn = useDebounceFn(async(rect: Point) => {
+    const newcol = rect.y + this.state.value.endY - this.state.value.startY - this.config.value.configRects.length
+    if (newcol <= 0)
+      return
+    const newRectsY = Array.from({ length: newcol }, (_, y) =>
+      Array.from({ length: rect.x + this.state.value.endX },
+        (_, x) => ({
+          x: x * this.rectLen,
+          y: (y + this.config.value.configRects.length) * this.rectLen,
+          width: this.rectLen,
+          height: this.rectLen,
+          fill: '#FFF',
+          stroke: '#9B9B9B82',
+          strokeWidth: 1,
+        }),
+      ),
+    )
+
+    for (const i in newRectsY)
+      this.config.value.configRects.push(newRectsY[i])
+
+    const res = await getConfigRects({
+      startX: newRectsY[0][0].x / 30,
+      startY: newRectsY[0][0].y / 30,
+      endX: newRectsY[newRectsY.length - 1][newRectsY[newRectsY.length - 1].length - 1].x / 30,
+      endY: newRectsY[newRectsY.length - 1][newRectsY[newRectsY.length - 1].length - 1].y / 30,
+    })
+
+    res.forEach((block) => {
+      if (this.config.value.configRects?.[block.y]?.[block.x])
+        this.config.value.configRects[block.y][block.x].fill = block.fill
+    })
+  }, 300)
 }

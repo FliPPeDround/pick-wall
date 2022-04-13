@@ -21,10 +21,11 @@ export interface RequestBlock {
 }
 
 export interface configKonva {
+  absolutePosition?: any
   width: number
   height: number
   draggable: boolean
-  dragBoundFunc: (pos: Point) => Point
+  dragBoundFunc?: (pos: Point) => Point
 }
 
 export interface Rect {
