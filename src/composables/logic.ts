@@ -8,6 +8,10 @@ export class PickWallInit {
   config = ref() as Ref<configWall>
   state = ref() as Ref<Rect>
   color = ref('#000')
+  move = {
+    x: 0,
+    y: 0,
+  }
 
   constructor(
     public width: number,
@@ -42,9 +46,11 @@ export class PickWallInit {
         dragBoundFunc(pos) {
           const newY = pos.y > 0 ? 0 : pos.y
           const newX = pos.x > 0 ? 0 : pos.x
-          const row = -Math.ceil(newX / self.rectLen) || 1
-          const col = -Math.ceil(newY / self.rectLen) || 1
-          self.debouncedFn({ x: row, y: col })
+          const move = {
+            x: -Math.ceil(newX / self.rectLen) || 1,
+            y: -Math.ceil(newY / self.rectLen) || 1,
+          }
+          self.debouncedFn(move)
           return {
             x: this.absolutePosition().x,
             y: newY,
@@ -65,7 +71,11 @@ export class PickWallInit {
         ),
       ),
     }
-    const res = await getConfigRects(this.state.value)
+    await this.getRects(this.state.value)
+  }
+
+  async getRects(state: Rect) {
+    const res = await getConfigRects(state)
 
     res.forEach((block) => {
       if (this.config.value.configRects?.[block.y]?.[block.x])
@@ -90,7 +100,6 @@ export class PickWallInit {
   }
 
   deleteBlock(block: BlockState) {
-    console.log(123)
     block.fill = '#FFF'
     deleteConfigRect({
       x: block.x / 30,
@@ -102,12 +111,16 @@ export class PickWallInit {
     this.color.value = color
   }
 
-  debouncedFn = useDebounceFn(async(rect: Point) => {
-    const newcol = rect.y + this.state.value.endY - this.state.value.startY - this.config.value.configRects.length
+  debouncedFn = useDebounceFn(async(move: Point) => {
+    const newcol = move.y - this.move.y
+    this.move = move
+    // const newcol = move.y + this.state.value.endY - this.state.value.startY - this.config.value.configRects.length
+    // console.log(newcol)
+
     if (newcol <= 0)
       return
     const newRectsY = Array.from({ length: newcol }, (_, y) =>
-      Array.from({ length: rect.x + this.state.value.endX },
+      Array.from({ length: move.x + this.state.value.endX },
         (_, x) => ({
           x: x * this.rectLen,
           y: (y + this.config.value.configRects.length) * this.rectLen,
@@ -122,17 +135,13 @@ export class PickWallInit {
 
     for (const i in newRectsY)
       this.config.value.configRects.push(newRectsY[i])
+      // this.config.value.configRects.shift()
 
-    const res = await getConfigRects({
+    await this.getRects({
       startX: newRectsY[0][0].x / 30,
       startY: newRectsY[0][0].y / 30,
       endX: newRectsY[newRectsY.length - 1][newRectsY[newRectsY.length - 1].length - 1].x / 30,
       endY: newRectsY[newRectsY.length - 1][newRectsY[newRectsY.length - 1].length - 1].y / 30,
-    })
-
-    res.forEach((block) => {
-      if (this.config.value.configRects?.[block.y]?.[block.x])
-        this.config.value.configRects[block.y][block.x].fill = block.fill
     })
   }, 500)
 }
