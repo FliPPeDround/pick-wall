@@ -134,5 +134,5 @@ export class PickWallInit {
       if (this.config.value.configRects?.[block.y]?.[block.x])
         this.config.value.configRects[block.y][block.x].fill = block.fill
     })
-  }, 300)
+  }, 500)
 }

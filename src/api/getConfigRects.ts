@@ -1,8 +1,8 @@
 import request from '~/composables/request'
-import type { BlockState, State } from '~/types'
+import type { BlockState, Rect } from '~/types'
 
-function getConfigRects(range: State) {
-  return request.post<unknown, BlockState[], State>('data/getConfigRects', range)
+function getConfigRects(range: Rect) {
+  return request.post<unknown, BlockState[], Rect>('data/getConfigRects', range)
 }
 
 export {
