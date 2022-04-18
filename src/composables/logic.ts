@@ -13,6 +13,8 @@ export class PickWallInit {
     y: 0,
   }
 
+  spliceRects = [] as BlockState[][]
+
   constructor(
     public width: number,
     public height: number,
@@ -117,31 +119,43 @@ export class PickWallInit {
     // const newcol = move.y + this.state.value.endY - this.state.value.startY - this.config.value.configRects.length
     // console.log(newcol)
 
-    if (newcol <= 0)
-      return
-    const newRectsY = Array.from({ length: newcol }, (_, y) =>
-      Array.from({ length: move.x + this.state.value.endX },
-        (_, x) => ({
-          x: x * this.rectLen,
-          y: (y + this.config.value.configRects.length) * this.rectLen,
-          width: this.rectLen,
-          height: this.rectLen,
-          fill: '#FFF',
-          stroke: '#9B9B9B82',
-          strokeWidth: 1,
-        }),
-      ),
-    )
+    if (newcol < 0) {
+      const spliceRectsLen = this.spliceRects.length
+      console.log(newcol)
 
-    for (const i in newRectsY)
-      this.config.value.configRects.push(newRectsY[i])
-      //
-    // this.config.value.configRects.splice(0, newcol - 5 < 0 ? 0 : newcol - 5)
-    await this.getRects({
-      startX: newRectsY[0][0].x / 30,
-      startY: newRectsY[0][0].y / 30,
-      endX: newRectsY[newRectsY.length - 1][newRectsY[newRectsY.length - 1].length - 1].x / 30,
-      endY: newRectsY[newRectsY.length - 1][newRectsY[newRectsY.length - 1].length - 1].y / 30,
-    })
-  }, 500)
+      console.log(spliceRectsLen)
+
+      this.config.value.configRects.unshift(...this.spliceRects.splice(spliceRectsLen + newcol, spliceRectsLen))
+      // console.log(this.config.value.configRects.length)
+    }
+
+    if (newcol > 0) {
+      const newRectsY = Array.from({ length: newcol }, (_, y) =>
+        Array.from({ length: move.x + this.state.value.endX },
+          (_, x) => ({
+            x: x * this.rectLen,
+            y: (y + this.config.value.configRects.length) * this.rectLen,
+            width: this.rectLen,
+            height: this.rectLen,
+            fill: '#FFF',
+            stroke: '#9B9B9B82',
+            strokeWidth: 1,
+          }),
+        ),
+      )
+
+      for (const i in newRectsY)
+        this.config.value.configRects.push(newRectsY[i])
+
+      this.spliceRects.push(...this.config.value.configRects.splice(0, newcol))
+
+      // await this.getRects({
+      //   startX: newRectsY[0][0].x / 30,
+      //   startY: newRectsY[0][0].y / 30,
+      //   endX: newRectsY[newRectsY.length - 1][newRectsY[newRectsY.length - 1].length - 1].x / 30,
+      //   endY: newRectsY[newRectsY.length - 1][newRectsY[newRectsY.length - 1].length - 1].y / 30,
+      // })
+      console.log(this.config.value.configRects.length)
+    }
+  }, 1000)
 }
