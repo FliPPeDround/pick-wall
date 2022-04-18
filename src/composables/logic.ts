@@ -38,7 +38,6 @@ export class PickWallInit {
       endX: Math.ceil(width / rectLen),
       endY: Math.ceil(height / rectLen),
     }
-    // eslint-disable-next-line @typescript-eslint/no-this-alias
     const self = this
     this.config.value = {
       configKonva: {
@@ -49,8 +48,8 @@ export class PickWallInit {
           const newY = pos.y > 0 ? 0 : pos.y
           const newX = pos.x > 0 ? 0 : pos.x
           const move = {
-            x: -Math.ceil(newX / self.rectLen) || 1,
-            y: -Math.ceil(newY / self.rectLen) || 1,
+            x: -Math.ceil(newX / self.rectLen),
+            y: -Math.ceil(newY / self.rectLen),
           }
           self.throttleFn(move)
           return {
@@ -117,13 +116,13 @@ export class PickWallInit {
     const newcol = move.y - this.move.y
     this.move = move
     // const newcol = move.y + this.state.value.endY - this.state.value.startY - this.config.value.configRects.length
-    // console.log(newcol)
+    console.log(`col:${newcol}`)
 
     if (newcol < 0) {
       const spliceRectsLen = this.spliceRects.length
-      console.log(newcol)
+      // console.log(newcol)
 
-      console.log(spliceRectsLen)
+      // console.log(spliceRectsLen)
 
       this.config.value.configRects.unshift(...this.spliceRects.splice(spliceRectsLen + newcol, spliceRectsLen))
       // console.log(this.config.value.configRects.length)
@@ -134,7 +133,7 @@ export class PickWallInit {
         Array.from({ length: move.x + this.state.value.endX },
           (_, x) => ({
             x: x * this.rectLen,
-            y: (y + this.config.value.configRects.length) * this.rectLen,
+            y: this.config.value.configRects[this.config.value.configRects.length - 1][0].y + (y+1) * this.rectLen,
             width: this.rectLen,
             height: this.rectLen,
             fill: '#FFF',
@@ -143,12 +142,14 @@ export class PickWallInit {
           }),
         ),
       )
-
-      for (const i in newRectsY)
-        this.config.value.configRects.push(newRectsY[i])
+      console.log(newRectsY)
+      this.config.value.configRects.push(...newRectsY)
+      console.log(this.config.value.configRects)
+      
 
       this.spliceRects.push(...this.config.value.configRects.splice(0, newcol))
-
+      console.log(this.config.value.configRects);
+          
       // await this.getRects({
       //   startX: newRectsY[0][0].x / 30,
       //   startY: newRectsY[0][0].y / 30,
@@ -157,5 +158,5 @@ export class PickWallInit {
       // })
       console.log(this.config.value.configRects.length)
     }
-  }, 1000)
+  }, 500)
 }
