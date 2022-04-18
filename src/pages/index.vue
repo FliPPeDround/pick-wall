@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import init, { config } from '~/composables/init'
-
 useResizeObserver(document.body, (entries) => {
   const entry = entries[0]
   const { width, height } = entry.contentRect

@@ -50,7 +50,7 @@ export class PickWallInit {
             x: -Math.ceil(newX / self.rectLen) || 1,
             y: -Math.ceil(newY / self.rectLen) || 1,
           }
-          self.debouncedFn(move)
+          self.throttleFn(move)
           return {
             x: this.absolutePosition().x,
             y: newY,
@@ -111,7 +111,7 @@ export class PickWallInit {
     this.color.value = color
   }
 
-  debouncedFn = useDebounceFn(async(move: Point) => {
+  throttleFn = useThrottleFn(async(move: Point) => {
     const newcol = move.y - this.move.y
     this.move = move
     // const newcol = move.y + this.state.value.endY - this.state.value.startY - this.config.value.configRects.length
@@ -135,8 +135,8 @@ export class PickWallInit {
 
     for (const i in newRectsY)
       this.config.value.configRects.push(newRectsY[i])
-      // this.config.value.configRects.shift()
-
+      //
+    // this.config.value.configRects.splice(0, newcol - 5 < 0 ? 0 : newcol - 5)
     await this.getRects({
       startX: newRectsY[0][0].x / 30,
       startY: newRectsY[0][0].y / 30,

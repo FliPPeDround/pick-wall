@@ -2,7 +2,7 @@ lockfileVersion: 5.3
 
 specifiers:
   '@antfu/eslint-config': ^0.19.4
-  '@ckpack/vue-color': ^1.1.8
+  '@ckpack/vue-color': ^1.1.7
   '@iconify-json/carbon': ^1.1.2
   '@types/node': ^17.0.23
   '@unocss/reset': ^0.30.11
@@ -30,7 +30,7 @@ specifiers:
   vue-tsc: ^0.33.9
 
 dependencies:
-  '@ckpack/vue-color': 1.1.8_vue@3.2.31
+  '@ckpack/vue-color': 1.1.9_vue@3.2.31
   '@vueuse/components': 8.2.5_vue@3.2.31
   '@vueuse/core': 8.2.4_vue@3.2.31
   axios: 0.26.1
@@ -356,8 +356,8 @@ packages:
       to-fast-properties: 2.0.0
     dev: true
 
-  /@ckpack/vue-color/1.1.8_vue@3.2.31:
-    resolution: {integrity: sha512-Gvqc4fgooJIP9ausGQK/vSXwOIy+I4oFN0tNP5m0yFdjHLzDe3GuULiYdrRhejTjxbAc9wiEaUG9UuDeE/RR2Q==}
+  /@ckpack/vue-color/1.1.9_vue@3.2.31:
+    resolution: {integrity: sha512-YBEg7SMlIxrc7Uc7pLhqR3FMDzkhxoY2xclMWWkO6+CDf7wwx9Wqh9nxRiaMqiPGcClqFDWiTgr1Z034sAcjpw==}
     engines: {node: '>=12'}
     peerDependencies:
       vue: ^3.2.0
