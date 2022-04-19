@@ -28,7 +28,7 @@ pipeline {
                 sh 'npm install -g n'
                 sh 'n stable'
                 sh 'node -v'
-                sh 'pnpm i --registry= https://registry.npmmirror.com/'
+                sh 'pnpm i'
                 sh 'pnpm build'
             }
         }
