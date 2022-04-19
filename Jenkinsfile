@@ -25,7 +25,7 @@ pipeline {
             steps {
                 echo '****************************** vue start... ******************************'
                 sh 'pwd'
-                sh 'pnpm install'
+                sh 'pnpm i --offline'
                 sh 'pnpm build'
             }
         }
