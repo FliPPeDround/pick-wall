@@ -1,9 +1,9 @@
 pipeline {
     agent any
     environment {
-        NAME = 'small-tools-web'
+        NAME = 'pick-wall'
         PROFILE = 'dev'
-        APP = 'registry.cn-hangzhou.aliyuncs.com/zhengqing/small-tools-web:dev'
+        APP = 'registry.cn-hangzhou.aliyuncs.com/zhengqing/pick-wall:dev'
         APP_PORT = 80
     }
 
@@ -14,7 +14,8 @@ pipeline {
           [$class: 'GitSCM',
           branches: [[name: GIT_BUILD_REF]],
           userRemoteConfigs: [[
-            url: 'https://e.coding.net/pick-wall/pick-wall/pick-wall-fe.git'
+            url: GIT_REPO_URL,
+              credentialsId: CREDENTIALS_ID
             ]]]
         )
       }
