@@ -24,6 +24,9 @@ pipeline {
         stage('vue环境准备') {
             steps {
                 echo '****************************** vue start... ******************************'
+                sh 'npm cache clean -f'
+                sh 'npm install -g n'
+                sh 'n stable'
                 sh 'node -v'
                 sh 'pnpm i'
                 sh 'pnpm build'
