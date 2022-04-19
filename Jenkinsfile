@@ -8,12 +8,18 @@ pipeline {
     }
 
     stages {
-        stage('下载代码') {
-            steps {
-                echo '****************************** download code start... ******************************'
-                git branch: 'dev', credentialsId: 'xxxxxxxxxxxxxxxxx', url: 'https://gitee.com/zhengqingya/small-tools.git'
-            }
-        }
+        stage("检出") {
+      steps {
+        checkout(
+          [$class: 'GitSCM',
+          branches: [[name: GIT_BUILD_REF]],
+          userRemoteConfigs: [[
+            url: GIT_REPO_URL,
+              credentialsId: CREDENTIALS_ID
+            ]]]
+        )
+      }
+    }
 
         stage('vue环境准备') {
             steps {
