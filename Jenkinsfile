@@ -7,12 +7,17 @@ pipeline {
 
   }
   stages {
-    stage('下载代码') {
-        steps {
-            echo '****************************** download code start... ******************************'
-            git branch: 'master', credentialsId: 'xxxxxxxxxxxxxxxxx', url: 'https://e.coding.net/pick-wall/pick-wall/pick-wall-fe.git'
+    stage('检出') {
+            steps {
+                checkout([
+                    $class: 'GitSCM', 
+                    branches: [[name: env.GIT_BUILD_REF]],
+                    // 请注意新版的检出语法比旧版新增了 credentialsId: env.CREDENTIALS_ID
+                    userRemoteConfigs: [[url: env.GIT_REPO_URL, credentialsId: env.CREDENTIALS_ID]]
+                ])
+            }
         }
-    }
+
     stage('vue环境准备') {
       steps {
         echo '****************************** vue start... ******************************'
