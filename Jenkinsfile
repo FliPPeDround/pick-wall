@@ -18,6 +18,7 @@ pipeline {
         stage('vue环境准备') {
             steps {
                 echo '****************************** vue start... ******************************'
+                sh 'pwd'
                 sh 'pnpm install'
                 sh 'pnpm build'
             }
