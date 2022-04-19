@@ -14,8 +14,7 @@ pipeline {
           [$class: 'GitSCM',
           branches: [[name: GIT_BUILD_REF]],
           userRemoteConfigs: [[
-            url: GIT_REPO_URL,
-              credentialsId: CREDENTIALS_ID
+            url: 'https://e.coding.net/pick-wall/pick-wall/pick-wall-fe.git'
             ]]]
         )
       }
