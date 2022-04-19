@@ -1,4 +1,4 @@
-import { config } from './init'
+import init, { config } from './init'
 
 // const baseUrl = import.meta.env.VITE_SOCKET_URL
 
@@ -10,8 +10,11 @@ ws.onopen = function() {
 ws.onmessage = function(evt) {
   const received_msg = evt.data
   const block = JSON.parse(received_msg)
-  if (config.value.configRects?.[block.y]?.[block.x])
-    config.value.configRects[block.y][block.x].fill = block.fill
+  const moveX = config.value.configRects[0][0].x / init.rectLen
+  const moveY = config.value.configRects[0][0].y / init.rectLen
+
+  if (config.value.configRects?.[block.y - moveY]?.[block.x - moveX])
+    config.value.configRects[block.y - moveY][block.x - moveX].fill = block.fill
 }
 
 ws.onclose = function() {

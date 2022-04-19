@@ -41,6 +41,9 @@
     "vue-tsc": "^0.33.9"
   },
   "eslintConfig": {
-    "extends": "@antfu"
+    "extends": "@antfu",
+    "rules": {
+      "@typescript-eslint/no-this-alias": "off"
+    }
   }
 }

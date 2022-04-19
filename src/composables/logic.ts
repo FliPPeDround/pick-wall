@@ -13,6 +13,8 @@ export class PickWallInit {
     y: 0,
   }
 
+  cursorStyle = ref('default')
+
   spliceRects = [] as BlockState[][]
 
   constructor(
@@ -45,6 +47,7 @@ export class PickWallInit {
         height,
         draggable: true,
         dragBoundFunc(pos) {
+          self.cursorStyle.value = 'move'
           const newY = pos.y > 0 ? 0 : pos.y
           const newX = pos.x > 0 ? 0 : pos.x
           const move = {
@@ -93,8 +96,8 @@ export class PickWallInit {
       this.deleteBlock(block)
     ws.send(JSON.stringify(
       {
-        x: block.x / 30,
-        y: block.y / 30,
+        x: block.x / this.rectLen,
+        y: block.y / this.rectLen,
         fill: block.fill,
       },
     ))
@@ -103,8 +106,8 @@ export class PickWallInit {
   deleteBlock(block: BlockState) {
     block.fill = '#FFF'
     deleteConfigRect({
-      x: block.x / 30,
-      y: block.y / 30,
+      x: block.x / this.rectLen,
+      y: block.y / this.rectLen,
     })
   }
 
@@ -115,17 +118,11 @@ export class PickWallInit {
   throttleFn = useThrottleFn(async(move: Point) => {
     const newcol = move.y - this.move.y
     this.move = move
-    // const newcol = move.y + this.state.value.endY - this.state.value.startY - this.config.value.configRects.length
-    console.log(`col:${newcol}`)
 
     if (newcol < 0) {
       const spliceRectsLen = this.spliceRects.length
-      // console.log(newcol)
-
-      // console.log(spliceRectsLen)
-
       this.config.value.configRects.unshift(...this.spliceRects.splice(spliceRectsLen + newcol, spliceRectsLen))
-      // console.log(this.config.value.configRects.length)
+      this.config.value.configRects.splice(newcol)
     }
 
     if (newcol > 0) {
@@ -133,7 +130,7 @@ export class PickWallInit {
         Array.from({ length: move.x + this.state.value.endX },
           (_, x) => ({
             x: x * this.rectLen,
-            y: this.config.value.configRects[this.config.value.configRects.length - 1][0].y + (y+1) * this.rectLen,
+            y: this.config.value.configRects[this.config.value.configRects.length - 1][0].y + (y + 1) * this.rectLen,
             width: this.rectLen,
             height: this.rectLen,
             fill: '#FFF',
@@ -142,21 +139,15 @@ export class PickWallInit {
           }),
         ),
       )
-      console.log(newRectsY)
-      this.config.value.configRects.push(...newRectsY)
-      console.log(this.config.value.configRects)
-      
-
-      this.spliceRects.push(...this.config.value.configRects.splice(0, newcol))
-      console.log(this.config.value.configRects);
-          
       // await this.getRects({
       //   startX: newRectsY[0][0].x / 30,
       //   startY: newRectsY[0][0].y / 30,
       //   endX: newRectsY[newRectsY.length - 1][newRectsY[newRectsY.length - 1].length - 1].x / 30,
       //   endY: newRectsY[newRectsY.length - 1][newRectsY[newRectsY.length - 1].length - 1].y / 30,
       // })
-      console.log(this.config.value.configRects.length)
+
+      this.config.value.configRects.push(...newRectsY)
+      this.spliceRects.push(...this.config.value.configRects.splice(0, newcol))
     }
-  }, 500)
+  }, 300)
 }
