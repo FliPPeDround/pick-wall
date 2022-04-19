@@ -8,4 +8,5 @@
   "files.associations": {
     "*.css": "postcss",
   },
+  "liveServer.settings.port": 5501,
 }
