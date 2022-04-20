@@ -15,8 +15,6 @@ export class PickWallInit {
 
   cursorStyle = ref('default')
 
-  spliceRects = [] as BlockState[][]
-
   constructor(
     public width: number,
     public height: number,
@@ -56,7 +54,7 @@ export class PickWallInit {
           }
           self.throttleFn(move)
           return {
-            x: this.absolutePosition().x,
+            x: newX,
             y: newY,
           }
         },
@@ -116,21 +114,36 @@ export class PickWallInit {
   }
 
   throttleFn = useThrottleFn(async(move: Point) => {
+    const newrow = move.x - this.move.x
     const newcol = move.y - this.move.y
     this.move = move
 
     if (newcol < 0) {
-      const spliceRectsLen = this.spliceRects.length
-      this.config.value.configRects.unshift(...this.spliceRects.splice(spliceRectsLen + newcol, spliceRectsLen))
+      const configRectsLast = this.config.value.configRects[0][0]
+      const newRectsY = Array.from({ length: -newcol }, (_, y) =>
+        Array.from({ length: this.config.value.configRects[0].length },
+          (_, x) => ({
+            x: this.config.value.configRects[this.config.value.configRects.length - 1][x].x,
+            y: configRectsLast.y + (newcol + y) * this.rectLen,
+            width: this.rectLen,
+            height: this.rectLen,
+            fill: '#FFF',
+            stroke: '#9B9B9B82',
+            strokeWidth: 1,
+          }),
+        ),
+      )
+      this.config.value.configRects.unshift(...newRectsY)
       this.config.value.configRects.splice(newcol)
     }
 
     if (newcol > 0) {
+      const configRectsLast = this.config.value.configRects[this.config.value.configRects.length - 1][0]
       const newRectsY = Array.from({ length: newcol }, (_, y) =>
-        Array.from({ length: move.x + this.state.value.endX },
+        Array.from({ length: this.config.value.configRects[0].length },
           (_, x) => ({
-            x: x * this.rectLen,
-            y: this.config.value.configRects[this.config.value.configRects.length - 1][0].y + (y + 1) * this.rectLen,
+            x: this.config.value.configRects[this.config.value.configRects.length - 1][x].x,
+            y: configRectsLast.y + (y + 1) * this.rectLen,
             width: this.rectLen,
             height: this.rectLen,
             fill: '#FFF',
@@ -147,7 +160,38 @@ export class PickWallInit {
       // })
 
       this.config.value.configRects.push(...newRectsY)
-      this.spliceRects.push(...this.config.value.configRects.splice(0, newcol))
+      this.config.value.configRects.splice(0, newcol)
     }
-  }, 300)
+    if (newrow > 0) {
+      this.config.value.configRects.forEach((row) => {
+        row.splice(0, newrow)
+        const rowLen = row.length
+        row.push(...Array.from({ length: newrow }, (_, x) => ({
+          x: row[rowLen - 1].x + this.rectLen * (x + 1),
+          y: row[rowLen - 1].y,
+          width: this.rectLen,
+          height: this.rectLen,
+          fill: '#FFF',
+          stroke: '#9B9B9B82',
+          strokeWidth: 1,
+        })))
+      })
+    }
+    if (newrow < 0) {
+      this.config.value.configRects.forEach((row) => {
+        row.splice(newrow)
+        const newRowList = Array.from({ length: -newrow }, (_, x) => ({
+          x: row[0].x + (this.rectLen * (newrow + x)),
+          y: row[0].y,
+          width: this.rectLen,
+          height: this.rectLen,
+          fill: '#FFF',
+          stroke: '#9B9B9B82',
+          strokeWidth: 1,
+        }))
+
+        row.unshift(...newRowList)
+      })
+    }
+  }, 500)
 }

@@ -31,7 +31,7 @@ const predefineColors = [
 </script>
 
 <template>
-  <div flex bg="gray-400/80" justify-center rounded-3xl>
+  <div flex bg="gray-400/80" justify-center rounded-3xl w130>
     <div flex="~ row">
       <div
         v-for="(color, index) in predefineColors"
