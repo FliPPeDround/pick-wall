@@ -5,7 +5,6 @@ useResizeObserver(document.body, (entries) => {
   const { width, height } = entry.contentRect
   init.reset(width, height)
 })
-
 </script>
 
 <template>
@@ -17,12 +16,12 @@ useResizeObserver(document.body, (entries) => {
         v-for="row,indexY in config.configRects"
         :key="indexY"
       >
-        <v-rect
+        <Rect
           v-for="block, indexX in row"
           :key="indexX"
           :config="block"
-          @click="init.pickblock(block)"
-          @dblclick="init.deleteBlock(block)"
+          @lclick="init.pickblock(block)"
+          @rclick="init.deleteBlock(block)"
         />
       </div>
     </v-layer>

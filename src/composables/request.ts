@@ -13,12 +13,7 @@ request.interceptors.response.use(
   (response) => {
     if (response.status !== 200)
       alert(`response.status: ${response.status}`)
-
     return response.data.data
-  },
-  (error) => {
-    if (error.response.status === 401)
-      window.location.reload()
   },
 )
 

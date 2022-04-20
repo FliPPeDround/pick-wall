@@ -5,8 +5,8 @@
     "target": "es2016",
     "lib": ["DOM", "ESNext"],
     "strict": true,
+    "jsx": "preserve",
     "esModuleInterop": true,
-    "incremental": false,
     "skipLibCheck": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,
@@ -24,3 +24,4 @@
   },
   "exclude": ["dist", "node_modules"]
 }
+

@@ -136,17 +136,18 @@ export class PickWallInit {
 
   async unshiftRectListCol(newcol: number) {
     const configRectsLast = this.config.value.configRects[0][0]
-    const newColList = Array.from({ length: -newcol }, (_, y) => Array.from({ length: this.config.value.configRects[0].length },
-      (_, x) => ({
-        x: this.config.value.configRects[this.config.value.configRects.length - 1][x].x,
-        y: configRectsLast.y + (newcol + y) * this.rectLen,
-        width: this.rectLen,
-        height: this.rectLen,
-        fill: '#FFF',
-        stroke: '#9B9B9B82',
-        strokeWidth: 1,
-      }),
-    ),
+    const newColList = Array.from({ length: -newcol }, (_, y) =>
+      Array.from({ length: this.config.value.configRects[0].length },
+        (_, x) => ({
+          x: this.config.value.configRects[this.config.value.configRects.length - 1][x].x,
+          y: configRectsLast.y + (newcol + y) * this.rectLen,
+          width: this.rectLen,
+          height: this.rectLen,
+          fill: '#FFF',
+          stroke: '#9B9B9B82',
+          strokeWidth: 1,
+        }),
+      ),
     )
     this.config.value.configRects.unshift(...newColList)
     this.config.value.configRects.splice(newcol)
@@ -154,17 +155,18 @@ export class PickWallInit {
 
   async pushRectListCol(newcol: number) {
     const configRectsLast = this.config.value.configRects[this.config.value.configRects.length - 1][0]
-    const newColList = Array.from({ length: newcol }, (_, y) => Array.from({ length: this.config.value.configRects[0].length },
-      (_, x) => ({
-        x: this.config.value.configRects[this.config.value.configRects.length - 1][x].x,
-        y: configRectsLast.y + (y + 1) * this.rectLen,
-        width: this.rectLen,
-        height: this.rectLen,
-        fill: '#FFF',
-        stroke: '#9B9B9B82',
-        strokeWidth: 1,
-      }),
-    ),
+    const newColList = Array.from({ length: newcol }, (_, y) =>
+      Array.from({ length: this.config.value.configRects[0].length },
+        (_, x) => ({
+          x: this.config.value.configRects[this.config.value.configRects.length - 1][x].x,
+          y: configRectsLast.y + (y + 1) * this.rectLen,
+          width: this.rectLen,
+          height: this.rectLen,
+          fill: '#FFF',
+          stroke: '#9B9B9B82',
+          strokeWidth: 1,
+        }),
+      ),
     )
 
     this.config.value.configRects.push(...newColList)

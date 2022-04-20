@@ -6,6 +6,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     ColorPicker: typeof import('./src/components/ColorPicker.vue')['default']
     ElPopover: typeof import('element-plus/es')['ElPopover']
+    Rect: typeof import('./src/components/Rect.vue')['default']
   }
 }
 
