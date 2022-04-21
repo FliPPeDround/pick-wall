@@ -26,11 +26,16 @@ export class PickWallInit {
     public height: number,
     public rectLen: number,
   ) {
+    this.init()
+    this.reset()
+  }
+
+  init() {
     if (localStorage.getItem('init-point'))
       this.initPoint = JSON.parse(localStorage.getItem('init-point')!)
     this.move = this.getMove(this.initPoint.x, this.initPoint.y)
-
-    this.reset()
+    if (localStorage.getItem('color'))
+      this.color.value = JSON.parse(localStorage.getItem('color')!)
   }
 
   async reset(
@@ -133,6 +138,7 @@ export class PickWallInit {
   }
 
   pickColor(color: string) {
+    localStorage.setItem('color', JSON.stringify(color))
     this.color.value = color
   }
 

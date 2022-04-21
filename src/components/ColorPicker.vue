@@ -73,7 +73,7 @@ const predefineColors = [
 
 <style scoped>
 .colorfull-picker {
-  background: linear-gradient(-60deg, #ff4500, #ff8c00, #ffd700, #90ee90, #00ced1, #1e90ff, #c71585);
+  background: linear-gradient(225deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%);
 }
 </style>
 

@@ -2,6 +2,7 @@
 const emit = defineEmits<{
   (e: 'rclick', evt: MouseEvent): void
   (e: 'lclick', evt: MouseEvent): void
+  (e: 'over'): void
 }>()
 
 function whichButton(e: { evt: MouseEvent }) {
@@ -12,10 +13,17 @@ function whichButton(e: { evt: MouseEvent }) {
   if (evt.button === 2)
     emit('rclick', evt)
 }
+
+const control = useKeyModifier('Control')
+function overOn() {
+  if (control.value)
+    emit('over')
+}
 </script>
 
 <template>
   <v-rect
     @mouseup="whichButton"
+    @mouseover="overOn"
   />
 </template>
