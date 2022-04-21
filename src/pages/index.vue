@@ -5,6 +5,7 @@ useResizeObserver(document.body, (entries) => {
   const { width, height } = entry.contentRect
   init.reset(width, height)
 })
+
 </script>
 
 <template>

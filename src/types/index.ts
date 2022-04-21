@@ -25,6 +25,8 @@ export interface configKonva {
   width: number
   height: number
   draggable: boolean
+  x?: number
+  y?: number
   dragBoundFunc?: (pos: Point) => Point
 }
 

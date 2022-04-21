@@ -6,6 +6,7 @@ import { deleteConfigRect } from '~/api/deleteConfigRect'
 
 export class PickWallInit {
   config = ref() as Ref<configWall>
+
   state = ref() as Ref<Rect>
   color = ref('#000')
   move = {
@@ -15,11 +16,20 @@ export class PickWallInit {
 
   cursorStyle = ref('default')
 
+  initPoint = {
+    x: 0,
+    y: 0,
+  }
+
   constructor(
     public width: number,
     public height: number,
     public rectLen: number,
   ) {
+    if (localStorage.getItem('init-point'))
+      this.initPoint = JSON.parse(localStorage.getItem('init-point')!)
+    this.move = this.getMove(this.initPoint.x, this.initPoint.y)
+
     this.reset()
   }
 
@@ -33,8 +43,8 @@ export class PickWallInit {
     this.rectLen = rectLen
 
     this.state.value = {
-      startX: 0,
-      startY: 0,
+      startX: -Math.ceil(this.initPoint.x / this.rectLen),
+      startY: -Math.ceil(this.initPoint.y / this.rectLen),
       endX: Math.ceil(width / rectLen),
       endY: Math.ceil(height / rectLen),
     }
@@ -44,26 +54,29 @@ export class PickWallInit {
         width,
         height,
         draggable: true,
+        y: self.initPoint.y,
+        x: self.initPoint.x,
         dragBoundFunc(pos) {
           self.cursorStyle.value = 'move'
           const newY = pos.y > 0 ? 0 : pos.y
           const newX = pos.x > 0 ? 0 : pos.x
-          const move = {
-            x: -Math.ceil(newX / self.rectLen),
-            y: -Math.ceil(newY / self.rectLen),
-          }
+          const move = self.getMove(newX, newY)
           self.dragRect(move)
+          self.setStorage({
+            x: newX,
+            y: newY,
+          })
           return {
             x: newX,
             y: newY,
           }
         },
       },
-      configRects: Array.from({ length: (this.state.value.endY - this.state.value.startY) }, (_, y) =>
-        Array.from({ length: (this.state.value.endX - this.state.value.startX) },
+      configRects: Array.from({ length: this.state.value.endY }, (_, y) =>
+        Array.from({ length: this.state.value.endX },
           (_, x) => ({
-            x: x * rectLen,
-            y: y * rectLen,
+            x: (this.state.value.startX + x) * rectLen,
+            y: (this.state.value.startY + y) * rectLen,
             width: rectLen,
             height: rectLen,
             fill: '#FFF',
@@ -76,6 +89,13 @@ export class PickWallInit {
     await this.getRects(this.state.value)
   }
 
+  getMove(newX: number, newY: number) {
+    return {
+      x: -Math.ceil(newX / this.rectLen),
+      y: -Math.ceil(newY / this.rectLen),
+    }
+  }
+
   async getRects(state: Rect) {
     const res = await getConfigRects(state)
 
@@ -86,6 +106,9 @@ export class PickWallInit {
   }
 
   pickblock(block: BlockState) {
+    // console.log(block)
+    // console.log(this.config.value.configRects)
+
     if (block.fill === this.color.value)
       return
     block.fill = this.color.value
@@ -131,6 +154,7 @@ export class PickWallInit {
       this.unshiftRectListRow(newrow)
 
     const state = this.getRectsState(this.config.value.configRects)
+
     await this.getRects(state)
   }, 500)
 
@@ -173,7 +197,7 @@ export class PickWallInit {
     this.config.value.configRects.splice(0, newcol)
   }
 
-  async pushRectListRow(newrow: number) {
+  pushRectListRow(newrow: number) {
     for (let i = 0; i < this.config.value.configRects.length; i++) {
       const row = this.config.value.configRects[i]
       row.splice(0, newrow)
@@ -192,7 +216,7 @@ export class PickWallInit {
     }
   }
 
-  async unshiftRectListRow(newrow: number) {
+  unshiftRectListRow(newrow: number) {
     for (let i = 0; i < this.config.value.configRects.length; i++) {
       const row = this.config.value.configRects[i]
       row.splice(newrow)
@@ -222,4 +246,8 @@ export class PickWallInit {
       endY,
     }
   }
+
+  setStorage = useDebounceFn((point: Point) => {
+    localStorage.setItem('init-point', JSON.stringify(point))
+  }, 2000)
 }
