@@ -59,7 +59,7 @@ const predefineColors = [
         ref="popoverRef"
         placement="top"
         :virtual-ref="buttonRef"
-        trigger="click"
+        trigger="hover"
         virtual-triggering
         :show-arrow="false"
       >

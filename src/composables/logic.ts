@@ -86,7 +86,7 @@ export class PickWallInit {
             height: rectLen,
             fill: '#FFF',
             stroke: '#9B9B9B82',
-            strokeWidth: 1,
+            strokeWidth: 0.5,
           }),
         ),
       ),
@@ -108,38 +108,6 @@ export class PickWallInit {
       if (this.config.value.configRects?.[block.y - state.startY]?.[block.x - state.startX])
         this.config.value.configRects[block.y - state.startY][block.x - state.startX].fill = block.fill
     })
-  }
-
-  pickblock(block: BlockState) {
-    // console.log(block)
-    // console.log(this.config.value.configRects)
-
-    if (block.fill === this.color.value)
-      return
-    block.fill = this.color.value
-    // eslint-disable-next-line no-constant-condition
-    if (this.color.value === '#FFF' || '#FFFFFF')
-      this.deleteBlock(block)
-    ws.send(JSON.stringify(
-      {
-        x: block.x / this.rectLen,
-        y: block.y / this.rectLen,
-        fill: block.fill,
-      },
-    ))
-  }
-
-  deleteBlock(block: BlockState) {
-    block.fill = '#FFF'
-    deleteConfigRect({
-      x: block.x / this.rectLen,
-      y: block.y / this.rectLen,
-    })
-  }
-
-  pickColor(color: string) {
-    localStorage.setItem('color', JSON.stringify(color))
-    this.color.value = color
   }
 
   dragRect = useThrottleFn(async(move: Point) => {
@@ -175,7 +143,7 @@ export class PickWallInit {
           height: this.rectLen,
           fill: '#FFF',
           stroke: '#9B9B9B82',
-          strokeWidth: 1,
+          strokeWidth: 0.5,
         }),
       ),
     )
@@ -194,7 +162,7 @@ export class PickWallInit {
           height: this.rectLen,
           fill: '#FFF',
           stroke: '#9B9B9B82',
-          strokeWidth: 1,
+          strokeWidth: 0.5,
         }),
       ),
     )
@@ -215,7 +183,7 @@ export class PickWallInit {
         height: this.rectLen,
         fill: '#FFF',
         stroke: '#9B9B9B82',
-        strokeWidth: 1,
+        strokeWidth: 0.5,
       }))
 
       row.push(...newRowList)
@@ -233,7 +201,7 @@ export class PickWallInit {
         height: this.rectLen,
         fill: '#FFF',
         stroke: '#9B9B9B82',
-        strokeWidth: 1,
+        strokeWidth: 0.5,
       }))
 
       row.unshift(...newRowList)
@@ -256,4 +224,44 @@ export class PickWallInit {
   setStorage = useDebounceFn((point: Point) => {
     localStorage.setItem('init-point', JSON.stringify(point))
   }, 2000)
+
+  // 监听事件
+  pickblock(block: BlockState) {
+    if (block.fill === this.color.value)
+      return
+    block.fill = this.color.value
+    // eslint-disable-next-line no-constant-condition
+    if (this.color.value === '#FFF' || '#FFFFFF')
+      this.deleteBlock(block)
+    ws.send(JSON.stringify(
+      {
+        x: block.x / this.rectLen,
+        y: block.y / this.rectLen,
+        fill: block.fill,
+      },
+    ))
+  }
+
+  deleteBlock(block: BlockState) {
+    block.fill = '#FFF'
+    deleteConfigRect({
+      x: block.x / this.rectLen,
+      y: block.y / this.rectLen,
+    })
+  }
+
+  pickColor(color: string) {
+    localStorage.setItem('color', JSON.stringify(color))
+    this.color.value = color
+  }
+
+  changeStroke(block: BlockState) {
+    block.stroke = this.color.value
+    block.strokeWidth = 1
+  }
+
+  recoverStroke(block: BlockState) {
+    block.stroke = '#9B9B9B82'
+    block.strokeWidth = 0.5
+  }
 }

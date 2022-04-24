@@ -19,11 +19,6 @@ const debouncedFn = useDebounceFn(() => {
 const changeFavicon = async() => {
   debouncedFn()
 }
-
-</script>
-
-<script>
-
 </script>
 
 <template>
@@ -44,6 +39,8 @@ const changeFavicon = async() => {
           @rclick="init.deleteBlock(block)"
           @over="init.pickblock(block),changeFavicon()"
           @click="changeFavicon"
+          @mouseenter="init.changeStroke(block)"
+          @mouseleave="init.recoverStroke(block)"
         />
       </div>
     </v-layer>
